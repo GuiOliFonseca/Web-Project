@@ -1,34 +1,3 @@
--- public.tb_bank definition
-
--- Drop table
-
--- DROP TABLE public.tb_bank;
-
-CREATE TABLE public.tb_bank (
-	id serial NOT NULL,
-	code varchar(3) NOT NULL,
-	"name" varchar(20) NOT NULL,
-	CONSTRAINT tb_bank_pkey PRIMARY KEY (id)
-);
-
-
--- public.tb_product_discount definition
-
--- Drop table
-
--- DROP TABLE public.tb_product_discount;
-
-CREATE TABLE public.tb_product_discount (
-	id serial NOT NULL,
-	value numeric(8,2) NOT NULL,
-	avaliable_for int4 NOT NULL,
-	is_deleted bool NOT NULL DEFAULT false,
-	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT tb_product_discount_pkey PRIMARY KEY (id)
-);
-
-
 -- public.tb_product_order_avaliation definition
 
 -- Drop table
@@ -94,25 +63,6 @@ CREATE TABLE public.tb_address (
 );
 
 
--- public.tb_bank_account definition
-
--- Drop table
-
--- DROP TABLE public.tb_bank_account;
-
-CREATE TABLE public.tb_bank_account (
-	id serial NOT NULL,
-	account varchar(10) NOT NULL,
-	agency varchar(10) NOT NULL,
-	is_deleted bool NOT NULL DEFAULT false,
-	id_bank int4 NOT NULL,
-	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT tb_bank_account_pkey PRIMARY KEY (id),
-	CONSTRAINT tb_bank_account_id_bank_foreign FOREIGN KEY (id_bank) REFERENCES tb_bank(id)
-);
-
-
 -- public.tb_client definition
 
 -- Drop table
@@ -142,7 +92,6 @@ CREATE TABLE public.tb_order (
 	id serial NOT NULL,
 	is_delivered bool NOT NULL DEFAULT false,
 	order_total numeric(8,2) NOT NULL,
-	is_deleted bool NOT NULL DEFAULT false,
 	id_client int4 NOT NULL,
 	id_address int4 NOT NULL,
 	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -165,7 +114,6 @@ CREATE TABLE public.tb_salesman (
 	cnpj varchar(14) NOT NULL UNIQUE,
 	is_deleted bool NOT NULL DEFAULT false,
 	id_user int4 NOT NULL,
-	id_bank_account int4 NULL,
 	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT tb_salesman_cnpj_unique UNIQUE (cnpj),
@@ -175,44 +123,19 @@ CREATE TABLE public.tb_salesman (
 );
 
 
--- public.tb_salesman_avaliation definition
-
--- Drop table
-
--- DROP TABLE public.tb_salesman_avaliation;
-
-CREATE TABLE public.tb_salesman_avaliation (
-	id serial NOT NULL,
-	liked varchar(1) NOT NULL,
-	"comment" text NULL,
-	is_deleted bool NOT NULL DEFAULT false,
-	id_order int4 NOT NULL,
-	id_client int4 NOT NULL,
-	id_salesman int4 NOT NULL,
-	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT tb_salesman_avaliation_pkey PRIMARY KEY (id),
-	CONSTRAINT tb_salesman_avaliation_id_client_foreign FOREIGN KEY (id_client) REFERENCES tb_client(id) ON DELETE CASCADE,
-	CONSTRAINT tb_salesman_avaliation_id_order_foreign FOREIGN KEY (id_order) REFERENCES tb_order(id) ON DELETE CASCADE,
-	CONSTRAINT tb_salesman_avaliation_id_salesman_foreign FOREIGN KEY (id_salesman) REFERENCES tb_salesman(id) ON DELETE CASCADE
-);
-
-
 -- public.tb_material definition
 
 -- Drop table
 
 -- DROP TABLE public.tb_material;
 
-CREATE TABLE public.tb_material (
+CREATE TABLE public.tb_category (
 	id serial NOT NULL,
 	"name" varchar(50) NOT NULL,
 	is_deleted bool NOT NULL DEFAULT false,
-	id_salesman int4 NULL,
 	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT tb_material_pkey PRIMARY KEY (id),
-	CONSTRAINT tb_material_id_salesman_foreign FOREIGN KEY (id_salesman) REFERENCES tb_salesman(id)
+	CONSTRAINT tb_material_pkey PRIMARY KEY (id)
 );
 
 
@@ -229,19 +152,14 @@ CREATE TABLE public.tb_product (
 	description text NOT NULL,
 	price numeric(8,2) NOT NULL,
 	quantity int4 NOT NULL,
-	quality varchar(1) NOT NULL,
-	width varchar(10) NOT NULL,
-	height varchar(10) NOT NULL,
 	is_active bool NOT NULL DEFAULT true,
 	is_deleted bool NOT NULL DEFAULT false,
-	id_material int4 NOT NULL,
+	id_category int4 NOT NULL,
 	id_salesman int4 NOT NULL,
-	id_discount int4 NULL,
 	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT tb_product_pkey PRIMARY KEY (id),
-	CONSTRAINT tb_product_id_discount_foreign FOREIGN KEY (id_discount) REFERENCES tb_product_discount(id),
-	CONSTRAINT tb_product_id_material_foreign FOREIGN KEY (id_material) REFERENCES tb_material(id),
+	CONSTRAINT tb_product_id_category_foreign FOREIGN KEY (id_category) REFERENCES tb_category(id),
 	CONSTRAINT tb_product_id_salesman_foreign FOREIGN KEY (id_salesman) REFERENCES tb_salesman(id)
 );
 
@@ -255,7 +173,6 @@ CREATE TABLE public.tb_product (
 CREATE TABLE public.tb_order_product (
 	id serial NOT NULL,
 	price numeric(8,2) NOT NULL,
-	discount numeric(8,2) NOT NULL,
 	quantity int4 NOT NULL,
 	is_deleted bool NOT NULL DEFAULT false,
 	id_product int4 NOT NULL,

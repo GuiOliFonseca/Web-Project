@@ -12,7 +12,7 @@ class Salesman {
                     .where({ id });
 
             } else {
-                salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.id_address', 'id_bank_account', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+                salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.id_address', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
                     .from('tb_salesman')
                     .where({ 'tb_salesman.id': id, 'tb_salesman.is_deleted': false })
                     .innerJoin('tb_user', 'tb_salesman.id_user', '=', 'tb_user.id');
@@ -28,7 +28,7 @@ class Salesman {
 
     static async findAll(page) {
         try {
-            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'id_bank_account', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
                 .from('tb_salesman')
                 .innerJoin('tb_user', 'tb_salesman.id_user', '=', 'tb_user.id')
                 .where({ 'tb_salesman.is_deleted': false })
@@ -47,7 +47,7 @@ class Salesman {
 
     static async findByEmail(email) {
         try {
-            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'id_bank_account', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
                 .from('tb_salesman')
                 .innerJoin('tb_user', 'tb_salesman.id_user', '=', 'tb_user.id')
                 .where({ 'tb_user.email': email });
@@ -61,7 +61,7 @@ class Salesman {
 
     static async findByTel(tel) {
         try {
-            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'id_bank_account', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
                 .from('tb_salesman')
                 .innerJoin('tb_user', 'tb_salesman.id_user', '=', 'tb_user.id')
                 .where({ 'tb_user.tel': tel });
@@ -75,7 +75,7 @@ class Salesman {
 
     static async findByCnpj(cnpj) {
         try {
-            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'id_bank_account', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const salesman = await knex.select('tb_salesman.id as id_salesman', 'tb_user.id as id_user', 'business_name', 'cnpj', 'tb_salesman.is_deleted', 'tb_salesman.created_at', 'tb_salesman.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
                 .from('tb_salesman')
                 .where({ cnpj })
                 .innerJoin('tb_user', 'tb_salesman.id_user', '=', 'tb_user.id');
@@ -121,11 +121,9 @@ class Salesman {
         try {
             return await knex.transaction(async trx => {
                 await trx('tb_salesman').update({ is_deleted: false }).where({ id: id_salesman });
-                await trx('tb_user').update({ is_deleted: false, is_verified: false }).where({ id: id_user });
+                await trx('tb_user').update({ is_deleted: false, is_verified: true }).where({ id: id_user });
 
                 await trx('tb_address').update({ is_deleted: false }).where({ id: id_user });
-
-                await trx('tb_bank_account').update({ is_deleted: false }).where({ id_salesman });
 
                 return { success: true, message: 'Vendedor recuperado!' };
             });
@@ -147,8 +145,6 @@ class Salesman {
                 await trx('tb_user').update({ is_deleted: true }).where({ id: id_user });
 
                 await trx('tb_address').update({ is_deleted: true }).where({ id: id_user });
-
-                await trx('tb_bank_account').update({ is_deleted: true }).where({ id_salesman });
 
                 const products = await trx('tb_product')
                     .update({ is_deleted: true, is_active: false })

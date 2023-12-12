@@ -6,12 +6,8 @@ exports.up = async function (knex) {
         table.increments('id').primary().notNullable();
         table.decimal('price').notNullable();
         table.decimal('price_total').notNullable();
-        table.decimal('width').notNullable();
-        table.decimal('height').notNullable();
-        table.decimal('tax').notNullable();
-        table.decimal('discount');
         table.integer('quantity').notNullable();
-        table.string('status', 1).defaultTo('C').notNullable(); // Criado Enviado Recebido 
+        table.string('status', 1).defaultTo('R').notNullable(); // Criado Enviado Recebido 
         table.integer('id_product').notNullable().unsigned().references('id').inTable('tb_product').onDelete('CASCADE');
         table.integer('id_order').notNullable().unsigned().references('id').inTable('tb_order').onDelete('CASCADE');
         table.timestamps(false, true); //created_at/updated_at

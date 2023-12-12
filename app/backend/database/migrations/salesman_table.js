@@ -1,15 +1,18 @@
-const tableName = 'tb_salesman_message';
+
+const tableName = 'tb_salesman';
 
 exports.up = async function (knex) {
     await knex.schema.createTable(tableName, function (table) {
         table.increments('id').primary().notNullable();
-        table.text('message').notNullable();
-        table.string('type', 1).notNullable();
-        table.json('aditional')
-        table.integer('id_salesman').notNullable().unsigned().references('id').inTable('tb_salesman').onDelete('CASCADE');
+        table.string('business_name', 150).notNullable();
+        table.string('cnpj', 14).notNullable().unique();
+        table.boolean('is_deleted').defaultTo(false).notNullable();
+        table.integer('id_user').notNullable().unsigned().references('id').inTable('tb_user').onDelete('CASCADE');
+        table.integer('id_address').unsigned().references('id').inTable('tb_address').onDelete('CASCADE').defaultTo(null);
         table.timestamps(false, true); //created_at/updated_at
     });
 
+    // Ajustar
     await knex.raw(`
         CREATE TRIGGER update_timestamp
         BEFORE UPDATE

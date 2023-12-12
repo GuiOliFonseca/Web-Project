@@ -1,18 +1,11 @@
 
-const tableName = 'tb_user';
+const tableName = 'tb_category';
 
 exports.up = async function (knex) {
-    await knex.schema.raw('CREATE EXTENSION IF NOT EXISTS UNACCENT').createTable(tableName, function (table) {
+    await knex.schema.createTable(tableName, function (table) {
         table.increments('id').primary().notNullable();
         table.string('name', 50).notNullable();
-        table.string('surname', 50).notNullable();
-        table.string('email', 150).notNullable().unique();
-        table.string('password', 255).notNullable();
-        table.string('tel', 15).notNullable().unique();
-        table.date('birthdate').notNullable();
-        table.string('type', 1).notNullable();
         table.boolean('is_deleted').defaultTo(false).notNullable();
-        table.boolean('is_verified').defaultTo(false);
         table.timestamps(false, true); //created_at/updated_at
     });
 

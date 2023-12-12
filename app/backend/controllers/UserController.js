@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const UserSchema = require('../schemas/UserSchema');
 class UserController {
+    
     static async show(req, res) {
         const id = req.params.id;
         if (isNaN(parseInt(id))) 

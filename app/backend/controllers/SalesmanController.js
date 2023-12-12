@@ -4,8 +4,6 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const saltRounds = parseInt(process.env.BCRYPT_SALT);
 const CNPJ = require('cnpj');
-const ConfirmationToken = require('../models/ConfirmationToken');
-const Email = require('../models/Email');
 const Product = require('../models/Product');
 const OrderProduct = require('../models/OrderProduct');
 class SalesmanController {
@@ -82,8 +80,6 @@ class SalesmanController {
         if (!result.success)
             return res.status(400).send(result);
 
-        const token = await ConfirmationToken.create(result.salesman.id_user, cnpj);
-        await Email.confirmAccount(name, email, token.token);
         return res.status(201).send(result);
     };
 
@@ -131,27 +127,6 @@ class SalesmanController {
         } else {
             return res.status(409).send({ success: false, message: 'Vendendor inexistente!' });
         }
-    };
-
-    static async retrieveAccount(req, res) {
-        // Como é só o adm que tem acesso a esse método, podemos fazer de forma simples sem envolver verificação por email
-
-        const id = req.params.id;
-
-        if (isNaN(parseInt(id)))
-            return res.status(400).send({ success: false, message: 'Id do cliente inválido' });
-
-
-        const existSalesman = await Salesman.findOne(id, true);
-        if (!existSalesman.success)
-            return res.status(404).send(existSalesman);
-
-
-        if (!existSalesman.salesman.is_deleted)
-            return res.status(409).send({ success: false, message: 'O vendedor não foi deletado!' });
-
-        const result = await Salesman.retrieve(existSalesman.salesman.id_user, existSalesman.salesman.id_salesman);
-        return result ? res.send(result) : res.status(400).send(result);
     };
 
     static async delete(req, res) {

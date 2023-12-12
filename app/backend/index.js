@@ -8,7 +8,6 @@ const helmet = require('helmet');
 const monitoringReqByUser = require('./middleware/LimMiter');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const cron = require('./utils/Jobs');
 
 //Convert decimal string to float to return
 const pg = require('pg');

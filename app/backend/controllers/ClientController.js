@@ -5,8 +5,6 @@ const bcrypt = require('bcrypt');
 const saltRounds = parseInt(process.env.BCRYPT_SALT);
 const CPF = require('cpf');
 const CNPJ = require('cnpj');
-const ConfirmationToken = require('../models/ConfirmationToken');
-const Email = require('../models/Email');
 const OrderProduct = require('../models/OrderProduct');
 
 class ClientController {
@@ -82,11 +80,8 @@ class ClientController {
 
         const result = await Client.create(user, client);
 
-        if (result.success) {
-            const token = await ConfirmationToken.create(result.client.id_user, cnpj !== '0' ? cnpj : cpf);
-            Email.confirmAccount(name, email, token.token);
-            res.status(201).send(result)
-        } else res.status(400).send(result);
+        if (result.success) res.status(201).send(result)
+        else res.status(400).send(result);
     };
 
     static async update(req, res) {
@@ -134,28 +129,6 @@ class ClientController {
                 return updatedClient.success ? res.send(updatedClient) : res.status(400).send(updatedClient);
             } else return res.status(400).send(result);
         } else return res.status(404).send({ success: false, message: 'Cliente inexistente!' });
-    };
-
-    static async retrieveAccount(req, res) {
-        // Como é só o adm que tem acesso a esse método, podemos fazer de forma simples sem envolver verificação por email
-
-        const id = req.params.id;
-
-        if (isNaN(parseInt(id)))
-            return res.status(400).send({ success: false, message: 'Id do cliente inválido' });
-
-
-        const existClient = await Client.findOne(id, true);
-        if (!existClient.success)
-            return res.status(404).send(existClient);
-
-
-        if (!existClient.client.is_deleted)
-            return res.status(409).send({ success: false, message: 'O cliente não foi deletado!' });
-
-
-        const result = await Client.retrieve(existClient.client.id_user, existClient.client.id_client);
-        return result ? res.send(result) : res.status(400).send(result);
     };
 
     static async delete(req, res) {

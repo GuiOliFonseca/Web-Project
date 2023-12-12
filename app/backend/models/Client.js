@@ -123,7 +123,7 @@ class Client {
         try {
             return await knex.transaction(async trx => {
                 await trx('tb_client').update({ is_deleted: false }).where({ id: id_client });
-                await trx('tb_user').update({ is_deleted: false, is_verified: false}).where({ id: id_user });
+                await trx('tb_user').update({ is_deleted: false, is_verified: true}).where({ id: id_user });
 
                 await trx('tb_address').update({ is_deleted: false }).where({ id_user });
 
