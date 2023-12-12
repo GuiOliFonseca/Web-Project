@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+dist
+*.local
+yarn-error.log
+
+app/frontend/src/services/config.js
+app/frontend/src/main.js
