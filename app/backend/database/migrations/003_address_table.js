@@ -1,4 +1,3 @@
-
 const tableName = 'tb_address';
 
 exports.up = async function (knex) {
