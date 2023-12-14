@@ -25,13 +25,11 @@
       :curPage="parseInt(pagination.currentPage)"
       :numPages="pagination.lastPage"
     />
-    <Footer />
   </div>
 </template>
 
 <script>
 import OrderItemLoad from "../components/OrderItemLoad.vue";
-import Footer from "../components/Footer.vue";
 import Pagination from "../components/Pagination.vue";
 import ProductItem from "../components/ProductItem.vue";
 
@@ -40,7 +38,6 @@ import Salesman from "../services/Salesman";
 export default {
   components: {
     OrderItemLoad,
-    Footer,
     Pagination,
     ProductItem,
   },

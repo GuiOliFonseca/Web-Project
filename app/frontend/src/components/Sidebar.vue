@@ -99,39 +99,6 @@
                 placeholder="Máx"
               />
             </div>
-            <label class="text-gray-500 mb-1">Qualidade</label>
-            <div class="flex">
-              <input
-                v-model="filters.min_quality"
-                class="
-                  my-2
-                  py-1
-                  px-2
-                  w-1/2
-                  mr-1
-                  rounded-md
-                  bg-gray-700
-                  text-gray-500
-                "
-                type="text"
-                placeholder="Min"
-              />
-              <input
-                v-model="filters.max_quality"
-                class="
-                  my-2
-                  py-1
-                  px-2
-                  w-1/2
-                  ml-1
-                  rounded-md
-                  bg-gray-700
-                  text-gray-500
-                "
-                type="text"
-                placeholder="Máx"
-              />
-            </div>
             <label class="text-gray-500 mb-1">CEP</label>
             <div class="flex mb-2">
               <input
@@ -184,22 +151,6 @@
           <span class="mx-4"> Início </span>
         </router-link>
 
-        <!-- Painel de controle -->
-        <router-link
-          v-if="
-            $store.state.user.user.type == 'V' ||
-            $store.state.user.user.type == 'A'
-          "
-          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-          :class="[$route.name === 'Dashboard' ? activeClass : inactiveClass]"
-          to="/dashboard"
-        >
-          <span class="h-5 w-5">
-            <i class="fas fa-tachometer-alt"></i>
-          </span>
-          <span class="mx-4"> Painel de controle </span>
-        </router-link>
-
         <!-- Perfil -->
         <router-link
           class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
@@ -226,100 +177,16 @@
         </router-link>
 
         <!-- Vendas -->
-        <div
+        <router-link
           v-if="$store.state.user.user.type == 'V'"
-          class="
-            flex
-            cursor-pointer
-            items-center
-            duration-200
-            mt-4
-            py-2
-            px-6
-            border-l-4
-          "
+          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
           :class="[$route.name === 'Orders' ? activeClass : inactiveClass]"
-          @click="toggleSaleOptions()"
+          to="/suas-vendas"
         >
           <span class="h-5 w-5">
-            <i class="fas fa-money-check-alt"></i>
+            <i class="fas fa-shopping-basket"></i>
           </span>
           <span class="mx-4"> Vendas </span>
-          <span v-if="saleOptions"><i class="fas fa-angle-up"></i></span>
-          <span v-else
-            ><i
-              class="fas fa-angle-down"
-              :class="[saleOptions ? 'fa-angle-up' : 'fa-angle-down']"
-            ></i
-          ></span>
-        </div>
-
-        <div v-show="saleOptions" class="ml-4 transition-all">
-          <router-link
-            class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-            :class="[
-              $route.name === 'SalesPending' ? activeClass : inactiveClass,
-            ]"
-            to="/suas-vendas/pendentes"
-          >
-            <span class="h-5 w-5">
-              <i class="fas fa-dolly"></i>
-            </span>
-            <span class="mx-4"> Pendentes </span>
-          </router-link>
-
-          <router-link
-            class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-            :class="[
-              $route.name === 'SalesShipped' ? activeClass : inactiveClass,
-            ]"
-            to="/suas-vendas/enviadas"
-          >
-            <span class="h-5 w-5">
-              <i class="fas fa-truck-moving"></i>
-            </span>
-            <span class="mx-4"> Enviadas </span>
-          </router-link>
-
-          <router-link
-            class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-            :class="[
-              $route.name === 'SalesDelivered' ? activeClass : inactiveClass,
-            ]"
-            to="/suas-vendas/recebidas"
-          >
-            <span class="h-5 w-5">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="mx-4"> Concluídas </span>
-          </router-link>
-        </div>
-
-        <!-- Avaliações
-        <router-link
-          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-          :class="[$route.name === 'Avaliation' ? activeClass : inactiveClass]"
-          to="/perfil"
-        >
-          <span class="h-5 w-5">
-            <i class="fas fa-quote-right"></i>
-          </span>
-          <span class="mx-4"> Suas avaliações </span>
-        </router-link> -->
-
-        <!-- Mensagens -->
-        <router-link
-          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-          :class="[
-            $route.name === 'HubMessage' ? activeClass : inactiveClass,
-            this.newMessage ? 'animate-pulse bg-red-800' : undefined,
-          ]"
-          to="/central-mensagens"
-        >
-          <span class="h-5 w-5">
-            <i class="fas fa-comment-dots"></i>
-          </span>
-          <span class="mx-4"> Central de Mensagens </span>
         </router-link>
 
         <router-link
@@ -347,30 +214,6 @@
           </span>
           <span class="mx-4"> Meus Produtos </span>
         </router-link>
-
-        <router-link
-          v-if="$store.state.user.user.type == 'A'"
-          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-          :class="[$route.name === 'Users' ? activeClass : inactiveClass]"
-          to="/usuarios/"
-        >
-          <span class="h-5 w-5">
-            <i class="fas fa-user"></i>
-          </span>
-          <span class="mx-4"> Usuários </span>
-        </router-link>
-
-        <router-link
-          v-if="$store.state.user.user.type == 'A'"
-          class="flex items-center duration-200 mt-4 py-2 px-6 border-l-4"
-          :class="[$route.name === 'Message' ? activeClass : inactiveClass]"
-          to="/mensagem/"
-        >
-          <span class="h-5 w-5">
-            <i class="fas fa-envelope"></i>
-          </span>
-          <span class="mx-4"> Enviar mensagem </span>
-        </router-link>
       </nav>
     </div>
     <MessageCardFixed :type="type" :title="title" :message="message" />
@@ -383,7 +226,6 @@ import { useSidebar } from "../hooks/useSidebar";
 import MessageCardFixed from "../components/MessageCardFixed.vue";
 import { mapActions, mapMutations } from "vuex";
 import genericMask from "../utils/genericMask";
-import Chat from "../services/Chat";
 
 export default defineComponent({
   setup() {
@@ -420,7 +262,6 @@ export default defineComponent({
   },
   watch: {
     "filters.cep"(newCep) {
-      //console.log(newCep);
       if (newCep.length == 8 && newCep.indexOf("-") == -1)
         this.filters.cep = genericMask(newCep, "#####-###");
     },
@@ -430,7 +271,6 @@ export default defineComponent({
   },
   sockets: {
     newMessage(data) {
-      //console.log(data)
       if(data.message.posted_by == this.$store.state.user.user.id_user || this.$route.name == 'HubMessage') return
       this.newMessage = true;
     },
@@ -457,36 +297,8 @@ export default defineComponent({
         this.type = "none";
       }, 3000);
     },
-
-    toggleSaleOptions() {
-      this.saleOptions = !this.saleOptions;
-    },
   },
   async created() {
-    if (this.$store.state.login.login.isLogged) {
-      const chats = await Chat.getChatRooms(
-        this.$store.state.user.user.id_user
-      );
-    
-      this.$socket.client.emit("identify", this.$store.state.user.user.id_user);
-      let rooms = [];
-
-      console.log(chats.conversations)
-
-      chats.conversations.map((room) => {
-        rooms.push(room.id_room);
-      });
-
-      for(let c of chats.conversations){
-        if(!c.read) {
-          this.newMessage = true
-          break;
-        }
-      }
-
-      if (!chats.conversations.length) return;
-      const res = this.$socket.client.emit("subscribe", rooms);
-    }
   },
   components: {
     MessageCardFixed,

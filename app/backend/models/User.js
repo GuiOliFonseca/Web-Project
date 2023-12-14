@@ -79,7 +79,7 @@ class User {
 
     static async findOne(id) {
         try {
-            const user = await knex.select('id', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_deleted', 'is_verified' )
+            const user = await knex.select('id', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_deleted' )
                 .from('tb_user')
                 .where({ id, 'is_deleted': false });
             return user[0] ? { success: true, user: user[0] } : { success: false, message: 'Não foi possível recuperar o usuário / Usuário inexistente!' };

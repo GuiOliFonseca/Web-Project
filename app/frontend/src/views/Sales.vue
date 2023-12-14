@@ -2,7 +2,7 @@
   <div id="top" class="min-h-screen flex flex-col">
     <div class="flex-grow px-6 pt-8 pb-2">
       <h1 class="text-2xl lg:text-5xl leading-none mb-10 text-gray-800">
-        Suas Vendas Enviadas
+        Suas Vendas
       </h1>
       <div v-if="!loading" class="flex-grow">
         <template v-for="item in items" :key="item.id">
@@ -21,7 +21,7 @@
         <span class="text-3xl md:text-4xl lg:text-6xl"
           ><i class="fas fa-truck-loading"></i
         ></span>
-        <p>Você ainda não tem nenhuma compra entregue!</p>
+        <p>Você ainda não tem nenhuma compra!</p>
       </div>
     </div>
 
@@ -31,8 +31,6 @@
       :curPage="parseInt(pagination.currentPage)"
       :numPages="pagination.lastPage"
     />
-
-    <Footer />
   </div>
 </template>
 
@@ -40,13 +38,11 @@
 import SaleItem from "../components/SaleItem.vue";
 import OrderItemLoad from "../components/OrderItemLoad.vue";
 import Pagination from "../components/Pagination.vue";
-import Footer from "../components/Footer.vue";
 import Order from "../services/Order";
 
 export default {
   components: {
     Pagination,
-    Footer,
     SaleItem,
     OrderItemLoad,
   },
@@ -69,10 +65,7 @@ export default {
     )
       return this.$router.push("/login");
     const orders = await Order.getAllSalesmanOrder(
-      this.$store.state.user.user.id_salesman,
-      1,
-      "R"
-    );
+      this.$store.state.user.user.id_salesman, 1);
 
     if (orders.success) {
       this.items = orders.order.data;

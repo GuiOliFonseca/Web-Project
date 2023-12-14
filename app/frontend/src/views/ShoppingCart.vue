@@ -29,13 +29,11 @@
         <CartSum />
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script>
 import Pagination from "../components/Pagination.vue";
-import Footer from "../components/Footer.vue";
 import CartItem from "../components/CartItem.vue";
 import CartSum from "../components/CartSum.vue";
 import CartItemLoad from "../components/CartItemLoad.vue";
@@ -45,7 +43,6 @@ import Product from "../services/Product";
 export default {
   components: {
     Pagination,
-    Footer,
     CartItem,
     CartSum,
     CartItemLoad,

@@ -18,12 +18,6 @@ class OrderController {
         return result.success ? res.send(result) : res.status(400).send(result);
     }
 
-    static async statusOrderProducts(req, res) {
-        const result = await Order.getStatusOrderProduct();
-
-        return result.success ? res.send(result) : res.status(400).send(result);
-    }
-
     static async amountProduct(req, res) {
         const id_salesman = req.params.id;
 
@@ -63,15 +57,15 @@ class OrderController {
         if (isNaN(parseInt(id_salesman)))
             return res.status(400).send({ success: false, message: 'Id de vendedor inválido!' });
 
-        let { page, method } = req.query;
+        let { page } = req.query;
 
         if (isNaN(parseInt(page))) page = '1';
 
-        const orders = await Order.findAllBySalesmanId(id_salesman, page, method);
+        const orders = await Order.findAllBySalesmanId(id_salesman, page);
 
         if (orders.success) {
             for (const order of orders.order.data) {
-                const prods = await OrderProduct.findAllSalesmanProducts(order.id, id_salesman, method);
+                const prods = await OrderProduct.findAllSalesmanProducts(order.id, id_salesman);
                 order.products = prods.order_products;
             }
             return res.send(orders);
@@ -80,15 +74,15 @@ class OrderController {
 
     static async index(req, res) {
 
-        let { page, method } = req.query;
+        let { page } = req.query;
 
         if (isNaN(parseInt(page))) page = '1';
 
-        const orders = await Order.findAll(page, method);
+        const orders = await Order.findAll(page);
 
         if (orders.success) {
             for (const order of orders.order.data) {
-                const prods = await OrderProduct.findAllByStatus(order.id, method);
+                const prods = await OrderProduct.findAll(order.id);
                 order.products = prods.order_products;
             }
             return res.send(orders);
@@ -113,7 +107,7 @@ class OrderController {
             order.order.order_total = 0;
             prods = prods.filter(prod => {
                 if (prod.id_salesman == req.locals.id_salesman)
-                    order.order.order_total += (prod.price_total - (prod.discount * prod.price_total / prod.price)) * prod.quantity;
+                    order.order.order_total += prod.price * prod.quantity;
 
                 return prod.id_salesman == req.locals.id_salesman;
             })

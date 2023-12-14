@@ -8,12 +8,6 @@ const createValidate = () => {
             'string.min': 'Nome não pode ter menos de 1 caractere!',
             'string.max': 'Nome não pode ter mais de 50 caracteres!',
             'any.required': 'Nome é obrigatório!'
-        }),
-        id_salesman: Joi.number().integer().min(1).messages({
-            'number.integer': 'Id deve ser um inteiro!',
-            'number.min': 'Id não pode ser menor que 1!',
-            'number.empty': 'Id não pode ser vazio!',
-            'any.required': 'Id não pode ser vazio!',
         })
     });
 }

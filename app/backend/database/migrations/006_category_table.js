@@ -5,7 +5,6 @@ exports.up = async function (knex) {
     await knex.schema.createTable(tableName, function (table) {
         table.increments('id').primary().notNullable();
         table.string('name', 50).notNullable();
-        table.boolean('is_deleted').defaultTo(false).notNullable();
         table.timestamps(false, true); //created_at/updated_at
     });
 

@@ -11,19 +11,12 @@ class Cart {
                 'tb_product.id AS id_product', 
                 'tb_cart.quantity AS cart_quantity', 
                 'tb_product.title', 
-                'tb_product.price', 
-                'tb_product.price_total',
-                'tb_product.quality', 
+                'tb_product.price',
                 'tb_product.quantity AS product_quantity', 
                 'tb_product.url_image', 
                 'tb_product.key_image', 
-                'tb_product.width',
-                'tb_product.style',
-                'tb_product.depth',
-                'tb_product.height', 
-                'tb_product.id_material', 
-                'tb_product.id_salesman', 
-                'tb_product.id_discount'
+                'tb_product.id_category', 
+                'tb_product.id_salesman'
                 ]).from('tb_cart')
                 .where({ 'tb_cart.id': id })
                 .orderBy('tb_cart.id')
@@ -46,25 +39,16 @@ class Cart {
                     'tb_salesman.business_name', 
                     'tb_cart.quantity AS cart_quantity', 
                     'tb_product.title', 
-                    'tb_product.price', 
-                    'tb_product.price_total',
-                    'tb_product.quantity AS product_quantity', 
-                    'tb_product.width',
-                    'tb_product.style',
-                    'tb_product.depth',
-                    'tb_product.height', 
-                    'tb_product.quality', 
+                    'tb_product.price',
+                    'tb_product.quantity AS product_quantity',
                     'tb_product.url_image', 
                     'tb_product.key_image', 
-                    'tb_product.id_material', 
-                    'tb_product.id_salesman', 
-                    'tb_product.id_discount', 
-                    'tb_product_discount.value AS discount'])
+                    'tb_product.id_category', 
+                    'tb_product.id_salesman'])
                 .where({ 'tb_cart.id_user': id_user })
                 .orderBy('tb_cart.id')
                 .innerJoin('tb_product', 'tb_product.id', 'tb_cart.id_product')
                 .innerJoin('tb_salesman', 'tb_salesman.id', 'tb_product.id_salesman')
-                .leftJoin('tb_product_discount', 'tb_product.id_discount', 'tb_product_discount.id')
             return cart ? { success: true, cart } : { success: false, message: 'Não foi possível recuperar o item / Itens inexistentes!' };
         } catch (error) {
             Message.warning(error);

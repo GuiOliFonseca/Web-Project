@@ -71,7 +71,7 @@ CREATE TABLE public.tb_address (
 
 CREATE TABLE public.tb_client (
 	id serial NOT NULL,
-	cpj varchar(11) NOT NULL UNIQUE DEFAULT '0'::character varying,
+	cpf varchar(11) NOT NULL UNIQUE DEFAULT '0'::character varying,
 	cnpj varchar(14) NOT NULL UNIQUE DEFAULT '0'::character varying,
 	is_deleted bool NOT NULL DEFAULT false,
 	id_user int4 NOT NULL,
@@ -90,7 +90,6 @@ CREATE TABLE public.tb_client (
 
 CREATE TABLE public.tb_order (
 	id serial NOT NULL,
-	is_delivered bool NOT NULL DEFAULT false,
 	order_total numeric(8,2) NOT NULL,
 	id_client int4 NOT NULL,
 	id_address int4 NOT NULL,
@@ -123,19 +122,18 @@ CREATE TABLE public.tb_salesman (
 );
 
 
--- public.tb_material definition
+-- public.tb_category definition
 
 -- Drop table
 
--- DROP TABLE public.tb_material;
+-- DROP TABLE public.tb_category;
 
 CREATE TABLE public.tb_category (
 	id serial NOT NULL,
 	"name" varchar(50) NOT NULL,
-	is_deleted bool NOT NULL DEFAULT false,
 	created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT tb_material_pkey PRIMARY KEY (id)
+	CONSTRAINT tb_category_pkey PRIMARY KEY (id)
 );
 
 

@@ -24,12 +24,6 @@ async function auth(req, res, next) {
     }
 };
 
-
-// -> Acesso individual por tipo
-async function allowAdmin(req, res, next) {
-    return req.locals.type === 'A' ? next() : res.status(401).send({ success: false, message: 'Acesso negado!' });
-}
-
 async function allowClient(req, res, next) {
     return req.locals.type === 'C' ? next() : res.status(401).send({ success: false, message: 'Acesso negado!' });
 }
@@ -40,14 +34,6 @@ async function allowSalesman(req, res, next) {
 
 
 // -> Acesso compartilhado por tipo
-async function allowClientAndAdmin(req, res, next) {
-    return (req.locals.type === 'C' || req.locals.type === 'A') ? next() : res.status(401).send({ success: false, message: 'Acesso negado!' });
-}
-
-async function allowSalesmanAndAdmin(req, res, next) {
-    return (req.locals.type === 'V' || req.locals.type === 'A') ? next() : res.status(401).send({ success: false, message: 'Acesso negado!' });
-}
-
 async function allowClientAndSalesman(req, res, next) {
     return (req.locals.type === 'C' || req.locals.type === 'V') ? next() : res.status(401).send({ success: false, message: 'Acesso negado!' });
 }
@@ -55,8 +41,6 @@ async function allowClientAndSalesman(req, res, next) {
 
 // -> Acesso por escopo
 async function allowOnlyOwnedClient(req, res, next) {
-    if (req.locals.type === 'A') return next();
-
     if (req.locals.type === 'V') return res.status(401).send({ success: false, message: 'Acesso negado!' });
 
     const id_client = req.locals.id_client;
@@ -67,8 +51,6 @@ async function allowOnlyOwnedClient(req, res, next) {
 }
 
 async function allowOnlyOwnedUser(req, res, next) {
-    if (req.locals.type === 'A') return next();
-
     const id_user = req.locals.id_user;
     if ((req.params.id && (req.params.id != id_user)) || (req.body.id_user && (req.body.id_user != id_user)))
         return res.status(401).send({ success: false, message: 'Acesso negado!' });
@@ -77,8 +59,6 @@ async function allowOnlyOwnedUser(req, res, next) {
 }
 
 async function allowOnlyOwnedSalesman(req, res, next) {
-    if (req.locals.type === 'A') return next();
-
     if (req.locals.type === 'C') return res.status(401).send({ success: false, message: 'Acesso negado!' });
 
     const id_salesman = req.locals.id_salesman;
@@ -89,9 +69,6 @@ async function allowOnlyOwnedSalesman(req, res, next) {
 }
 
 async function allowOnlyOwned(req, res, next) {
-    if (req.locals.type === 'A') return next();
-
-
     if (req.locals.type === 'V') {
         const id_salesman = req.locals.id_salesman;
         if ((req.params.id && (req.params.id != id_salesman)) || (req.body.id_salesman && (req.body.id_salesman != id_salesman)))
@@ -111,12 +88,9 @@ module.exports = {
     auth,
     allowClient,
     allowSalesman,
-    allowAdmin,
     allowClientAndSalesman,
     allowOnlyOwnedClient,
     allowOnlyOwnedUser,
     allowOnlyOwned,
-    allowOnlyOwnedSalesman,
-    allowSalesmanAndAdmin,
-    allowClientAndAdmin
+    allowOnlyOwnedSalesman
 };

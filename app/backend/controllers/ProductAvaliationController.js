@@ -48,9 +48,6 @@ class ProductAvaliationController {
         if(!order.success) 
             return res.status(400).send(order);
 
-        if(req.locals.type == 'V' || req.locals.id_client != order.order.id_client) 
-            return res.status(401).send({success: false, message: 'Acesso não autorizado!'});
-
         const avaliation = await ProductAvaliation.findAllByOrder(id_order, page);
         return avaliation.success ? res.send(avaliation) : res.status(404).send(avaliation);
     }
@@ -96,15 +93,9 @@ class ProductAvaliationController {
         if (!existOrder.success)
             return res.status(404).send(existOrder);
 
-        if(existOrder.order.id_client != req.locals.id_client)  
-            return res.status(404).send({ success: false, message: 'Acesso não autorizado!'});
-
         const existOrderProduct = await OrderProduct.findOne(id_order_product);
         if (!existOrderProduct.success)
             return res.status(404).send(existOrder);
-
-        if (existOrderProduct.order_product.status !== 'R')
-            return res.status(409).send({ success: false, message: 'A entrega ainda não foi concluída!' });
 
         const alreadyExistsAvaliation = await ProductAvaliation.findByOrderAndOrderProduct(id_order, id_order_product);
         if (alreadyExistsAvaliation.success)
@@ -132,8 +123,6 @@ class ProductAvaliationController {
 
         if(!order.success) 
             return res.status(400).send(order);
-        if(order.order.id_client != req.locals.id_client) 
-            return res.status(401).send({success: false, message: 'Acesso não autorizado!'});
 
         const result = await ProductAvaliation.delete(id);
         return result.success ? res.send(result) : res.status(400).send(result);

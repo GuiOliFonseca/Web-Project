@@ -1,5 +1,5 @@
 const Product = require('../models/Product');
-const Material = require('../models/Material');
+const Category = require('../models/Category');
 const User = require('../models/User');
 const Salesman = require('../models/Salesman');
 
@@ -117,14 +117,14 @@ class ProductController {
         return product.success ? res.send(product) : res.status(404).send(product);
     }
 
-    static async indexByMaterial(req, res) {
+    static async indexByCategory(req, res) {
         let page = req.query.page;
         if (isNaN(parseInt(page))) page = '1';
 
-        const id_material = req.params.id_material;
-        if (isNaN(parseInt(page))) return res.status(400).send({ success: false, message: 'Id do material inválido!' });
+        const id_category = req.params.id_category;
+        if (isNaN(parseInt(page))) return res.status(400).send({ success: false, message: 'Id da categoria inválido!' });
 
-        const product = await Product.findByMaterial(id_material, page);
+        const product = await Product.findByCategory(id_category, page);
         return product.success ? res.send(product) : res.status(404).send(product);
     }
 
@@ -166,14 +166,25 @@ class ProductController {
     }
 
     static async createNew(req, res) {
-
         const product_img = [];
 
         if (!req.files.length)
             return res.status(400).send({ success: false, message: 'As imagens não foram carregadas!' });
 
         const schema = ProductSchema.createValidate();
-        const { error } = schema.validate(req.body);
+        const data = JSON.parse(req.body.data);
+        const { error } = schema.validate(data);
+
+        const { title, id_category, description, price, quantity, id_salesman } = data;
+
+        let product = {
+            title,
+            id_category,
+            description,
+            price,
+            quantity,
+            id_salesman
+        }
 
         for (let file of req.files) {
             const { originalname: name, size, key, location: url = '' } = file;
@@ -185,29 +196,10 @@ class ProductController {
             return res.status(400).send({ success: false, message: error.details[0].message });
         }
 
-        if (req.body.id_salesman !== req.locals.id_salesman.toString()) {
-            deleteImages(product_img);
-            return res.status(401).send({ success: false, message: 'Acesso não autorizado!!' });
-        }
+        product.key_image = product_img[0].key;
+        product.url_image = product_img[0].url;
 
-        if (!salesman.salesman.id_address) {
-            deleteImages(product_img);
-            return res.status(409).send({ success: false, message: 'Você deve cadastrar um endereço antes!' });
-        }
-
-
-        const existTitle = await Product.findByTitleAndSalesman(req.body.title, req.body.id_salesman)
-        if (existTitle.success && Object.keys(existTitle.product).length) {
-            this.deleteImages(product_img);
-            return res.status(409).send({ success: false, message: 'Título já cadastrado em sua loja!' });
-        }
-
-        req.body.key_image = product_img[0].key;
-        req.body.url_image = product_img[0].url;
-
-        req.body.price_total = req.body.price;
-
-        const result = await Product.create(req.body, product_img);
+        const result = await Product.create(product, product_img);
         if (result.success) return res.status(201).send(result);
 
         deleteImages(product_img);
@@ -238,7 +230,7 @@ class ProductController {
                 return res.status(400).send({ success: false, message: 'Houve um erro no processamento das imagens!' });
 
             req.body.data = JSON.parse(req.body.data);
-            let { title, id_material, description, price, quantity, is_active, id_product, delete_image } = req.body.data;
+            let { title, id_category, description, price, quantity, is_active, id_product, delete_image } = req.body.data;
 
             const schema = ProductSchema.updateValidate();
             const { error } = schema.validate(req.body.data);
@@ -247,9 +239,6 @@ class ProductController {
                 return res.status(400).send({ success: false, message: error.details[0].message });
 
             const product = await Product.findOne(id_product);
-
-            if (product.success && product.product.id_salesman !== req.locals.id_salesman)
-                return res.status(400).send({ success: false, message: 'Acesso não autorizado!' });
 
             if (product.success) {
                 if (title && product.product.title !== title) {
@@ -270,10 +259,10 @@ class ProductController {
             if (is_active && is_active !== product.product.is_active) toUpdate['is_active'] = is_active;
             
 
-            if (id_material && id_material !== product.product.id_material) {
-                const existsMaterial = await Material.findOne(id_material);
-                if (existsMaterial.success && Object.keys(existsMaterial.material).length) toUpdate['id_material'] = id_material;
-                else return res.status(400).send({ success: false, message: 'Material não existe!' });
+            if (id_category && id_category !== product.product.id_category) {
+                const existsCategory = await Category.findOne(id_category);
+                if (existsCategory.success && Object.keys(existsCategory.category).length) toUpdate['id_category'] = id_category;
+                else return res.status(400).send({ success: false, message: 'Categoria não existe!' });
             }
 
             let delete_img = [];
@@ -294,8 +283,6 @@ class ProductController {
                 return res.status(400).send({ success: false, message: 'Você não pode adicionar mais de 5 ou remover todas as imagens do anúncio!' });
 
             price = price || product.product.price;
-
-            toUpdate['price_total'] = price.toFixed(2);
 
             const result = await Product.update(id_product, toUpdate, product_img, delete_img, delete_cover);
             if (result.success) {

@@ -12,7 +12,7 @@ class Client {
                     .where({ id });
 
             } else {
-                client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+                client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate' )
                     .from('tb_client')
                     .where({ 'tb_client.id': id, 'tb_client.is_deleted': false })
                     .innerJoin('tb_user', 'tb_client.id_user', '=', 'tb_user.id');
@@ -27,7 +27,7 @@ class Client {
 
     static async findAll(page) {
         try {
-            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate' )
                 .from('tb_client')
                 .innerJoin('tb_user', 'tb_client.id_user', '=', 'tb_user.id')
                 .where({ 'tb_client.is_deleted': false })
@@ -46,7 +46,7 @@ class Client {
 
     static async findByCnpjOrCpf(cpf, cnpj) {
         try {
-            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate' )
                 .from('tb_client')
                 .innerJoin('tb_user', 'tb_client.id_user', '=', 'tb_user.id')
                 .where({ cnpj }).orWhere({ cpf });
@@ -60,7 +60,7 @@ class Client {
 
     static async findByEmail(email) {
         try {
-            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate' )
                 .from('tb_client')
                 .innerJoin('tb_user', 'tb_client.id_user', '=', 'tb_user.id')
                 .where({ 'tb_user.email': email });
@@ -74,7 +74,7 @@ class Client {
 
     static async findByTel(tel) {
         try {
-            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate', 'is_verified')
+            const client = await knex.select('tb_client.id as id_client', 'tb_user.id as id_user', 'cpf', 'cnpj', 'tb_client.is_deleted', 'tb_client.created_at', 'tb_client.updated_at', 'name', 'surname', 'email', 'tel', 'type', 'birthdate' )
                 .from('tb_client')
                 .innerJoin('tb_user', 'tb_client.id_user', '=', 'tb_user.id')
                 .where({ 'tb_user.tel': tel });
@@ -123,7 +123,7 @@ class Client {
         try {
             return await knex.transaction(async trx => {
                 await trx('tb_client').update({ is_deleted: false }).where({ id: id_client });
-                await trx('tb_user').update({ is_deleted: false, is_verified: true}).where({ id: id_user });
+                await trx('tb_user').update({ is_deleted: false }).where({ id: id_user });
 
                 await trx('tb_address').update({ is_deleted: false }).where({ id_user });
 

@@ -8,10 +8,7 @@
     class="mb-10"
   >
     <slide v-for="dt in data" :key="dt.id">
-      <div v-if="type == 'B'">
-        <Banner style="height: 24rem" :banner="dt" />
-      </div>
-      <template v-else><ProductCard :product="dt" /></template>
+      <template><ProductCard :product="dt" /></template>
     </slide>
 
     <template #addons>
@@ -23,7 +20,6 @@
 <script>
 import "vue3-carousel/dist/carousel.css";
 import ProductCard from "./ProductCard.vue";
-import Banner from "./Banner.vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 
 export default {
@@ -32,7 +28,6 @@ export default {
     Slide,
     Navigation,
     ProductCard,
-    Banner,
   },
   props: {
     data: Array,

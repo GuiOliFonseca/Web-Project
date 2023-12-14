@@ -120,9 +120,6 @@ class CartController {
         if (quantity > product.product.quantity)
             return res.status(400).send({ success: false, message: 'Quantidade maior que a disponível!' });
 
-        if(req.locals.id_user !== cartItem.item.id_user && req.locals.type !== 'C')
-            return res.status(401).send({success: false, message: 'Acesso não autorizado!'});
-
         const result = await Cart.updateByIdItem(id_item, { quantity });
         return result.success ? res.send(result) : res.status(400).send(result);
     }
@@ -132,8 +129,6 @@ class CartController {
 
         if (isNaN(parseInt(id_user)))
             return res.status(400).send({ success: false, message: 'Id de usuário inválido!' });
-        if(req.locals.id_user != id_user)
-            return res.status(400).send({ success: false, message: 'Acesso não autorizado!' });
 
         const result = await Cart.deleteAll(id_user);
         return result.success ? res.send(result) : res.status(400).send(result);
@@ -148,10 +143,6 @@ class CartController {
         const item = await Cart.findOne(id_item);
         if ((!item.success || (item.success && !Object.keys(item.item).length)))
             return res.status(404).send({ success: false, message: 'Item não existe!' });
-
-        if (item.success && item.item.id_user !== req.locals.id_user) 
-            return res.status(400).send({ success: false, message: 'Acesso não autorizado!' });
-
 
         const result = await Cart.delete(id_item);
         return result.success ? res.send(result) : res.status(400).send(result);

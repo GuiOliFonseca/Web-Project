@@ -17,7 +17,6 @@
       :curPage="parseInt(pagination.currentPage)"
       :numPages="pagination.lastPage"
     />
-    <Footer />
   </div>
 </template>
 
@@ -26,7 +25,6 @@ import Label from "../components/Label.vue";
 import ProductGrid from "../components/ProductGrid.vue";
 import ProductGridLoad from "../components/ProductGridLoad.vue";
 import Pagination from "../components/Pagination.vue";
-import Footer from "../components/Footer.vue";
 
 import { mapMutations, mapActions } from "vuex";
 export default {
@@ -56,7 +54,6 @@ export default {
     ProductGridLoad,
     ProductGrid,
     Pagination,
-    Footer,
   },
   async created() {
     if (this.$route.query.search) this.searchQuery = this.$route.query.search;

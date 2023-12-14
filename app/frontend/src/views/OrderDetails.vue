@@ -444,18 +444,14 @@
         </template>
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script>
 import OrderInfo from "../components/OrderInfo.vue";
-import Footer from "../components/Footer.vue";
-import PaymentItemLoad from "../components/PaymentItemLoad.vue";
 import MessageCardFixed from "../components/MessageCardFixed.vue";
 
 import ProductAvaliation from "../services/ProductAvaliation";
-import SalesmanAvaliation from "../services/SalesmanAvaliation";
 import Order from "../services/Order";
 export default {
   data() {
@@ -463,8 +459,6 @@ export default {
       liked: 'L',
       avaliation: undefined,
       openAvaliationProduct: false,
-      openAvaliationSalesman: false,
-      openConfirmDelivery: false,
 
       order: {},
       loading: true,
@@ -482,8 +476,6 @@ export default {
   },
   components: {
     OrderInfo,
-    Footer,
-    PaymentItemLoad,
     MessageCardFixed
   },
   methods: {
@@ -494,33 +486,6 @@ export default {
       this.name = name;
       this.avaliationData = {id_order_product};
       this.openAvaliationProduct = true;
-    },
-    modalAvaliationSalesman(id_salesman, id_order_product, name) {
-      this.name = name;
-      this.avaliationData = {id_salesman, id_order_product};
-      this.openAvaliationSalesman = true;
-    },
-    modalConfirmDelivery(id_salesman, id_order_product, name) {
-      this.name = name;
-      this.avaliationData = {id_salesman, id_order_product};
-      this.openConfirmDelivery = true;
-    },
-    async salesmanAvaliation() {
-      this.buttonLoading = true;
-      let data = {
-        liked: this.liked,
-        comment: this.avaliation,
-        ...this.avaliationData,
-        id_client: this.order.id_client,
-      };
-      const result = await SalesmanAvaliation.create(data);
-      if(result.success) {
-        this.setMessage('Sucesso!', 'success', 'Avaliação Cadastrada!', 3000);
-      } else {
-        this.setMessage('Erro!', 'error', result.message, 3000);
-      }
-      this.buttonLoading = false;
-      this.openAvaliationSalesman = false;
     },
     async productAvaliation() {
       this.buttonLoading = true;
@@ -538,23 +503,6 @@ export default {
       }
       this.buttonLoading = false;
       this.openAvaliationProduct = false;
-    },
-    async confirmDelivery(){
-      this.buttonLoading = true;
-      const result = await Order.confirmDelivery(this.$store.state.user.user.id_client, this.order.id, this.avaliationData.id_order_product);
-      //console.log(result);
-      if(result.success) {
-        this.setMessage('Sucesso!', 'success', 'Recebimento Confirmado!', 3000);
-        let id = this.avaliationData.id_order_product;
-        this.order.products = this.order.products.map(item => {
-          if(item.id_order_product == id) item.status = 'R';
-          return item;
-        })
-      } else {
-        this.setMessage('Erro!', 'error', result.message, 3000);
-      }
-      this.buttonLoading = false;
-      this.openConfirmDelivery = false;
     },
     setMessage(title, type, message, miliseconds) {
       this.message = message;

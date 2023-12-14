@@ -153,22 +153,14 @@
           </div>
         </template>
         <template v-if="loading">
-          <PaymentItemLoad />
-          <PaymentItemLoad />
-          <PaymentItemLoad />
-          <PaymentItemLoad />
-          <PaymentItemLoad />
         </template>
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script>
 import SaleInfo from "../components/SaleInfo.vue";
-import Footer from "../components/Footer.vue";
-import PaymentItemLoad from "../components/PaymentItemLoad.vue";
 import MessageCardFixed from "../components/MessageCardFixed.vue";
 
 import Order from "../services/Order";
@@ -192,8 +184,6 @@ export default {
   },
   components: {
     SaleInfo,
-    Footer,
-    PaymentItemLoad,
     MessageCardFixed,
   },
   methods: {

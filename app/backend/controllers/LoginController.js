@@ -23,9 +23,6 @@ class LoginController {
                 if (user.user.is_deleted)
                     return res.status(401).send({ success: false, message: 'Usuário removido do sistema, entre em contato para maiores informações.' });
 
-                if (!user.user.is_verified)
-                    return res.status(403).send({ success: false, message: 'Usuário deve confirmar o email antes de fazer login!', id_user: user.user.id });
-
                 let data = {
                     email: user.user.email,
                     type: user.user.type,
@@ -56,10 +53,6 @@ class LoginController {
         const user = await User.findOne(id, true);
 
         if (user.success && Object.keys(user.user).length) {
-            if (!user.user.is_verified){
-                return res.status(403).send({ success: false, message: 'Usuário deve confirmar o email antes de fazer login!', id_user: user.user.id });
-            }
-
             let data = {
                 email: user.user.email,
                 type: user.user.type,

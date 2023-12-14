@@ -67,16 +67,6 @@
           />
         </div>
 
-        <div class="flex justify-end items-center">
-          <div>
-            <router-link
-              class="block text-sm fontme text-gray-500 hover:text-red-800"
-              to="/recuperar-senha"
-              >Esqueceu a senha?</router-link
-            >
-          </div>
-        </div>
-
         <MessageCard :type="type" :message="message" :title="title" />
 
         <div class="mt-6">
@@ -143,9 +133,6 @@
           </div>
         </div>
       </form>
-      <p class="text-center text-gray-500 text-xs mt-10">
-        &copy;2020 iStones | All rights reserved.
-      </p>
     </div>
   </div>
 </template>

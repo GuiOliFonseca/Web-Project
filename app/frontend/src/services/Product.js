@@ -33,9 +33,9 @@ class Product {
         }
     }
 
-    static async getProductByMaterial(id) {
+    static async getProductByCategory(id) {
         try {
-            const response = await axios.get(`${apiURL}/product/material/${id}`);
+            const response = await axios.get(`${apiURL}/product/category/${id}`);
             return response.data;
         } catch (error) {
             if(error.response && error.response.data)

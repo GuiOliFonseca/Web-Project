@@ -11,7 +11,7 @@ class Order {
 
     static async countOrders() {
         try {
-            const result = await knex('tb_order').count('id', { as: 'quantity' }).where({ 'is_deleted': false, 'current_status': 'paid' });
+            const result = await knex('tb_order').count('id', { as: 'quantity' }).where({ 'is_deleted': false });
 
             return { success: true, numProducts: result[0].quantity };
         } catch (error) {
@@ -55,14 +55,14 @@ class Order {
         }
     }
 
-    static async findAllBySalesmanId(id_salesman, page, method) {
+    static async findAllBySalesmanId(id_salesman, page) {
 
         try {
-            const order = await knex.select('tb_order.id', 'tb_order.order_total', 'tb_order.id_address', 'tb_order.id_client', 'tb_order.current_status', 'tb_order.created_at')
+            const order = await knex.select('tb_order.id', 'tb_order.order_total', 'tb_order.id_address', 'tb_order.id_client', 'tb_order.created_at')
                 .from('tb_order')
                 .join('tb_order_product', { 'tb_order.id': 'tb_order_product.id_order' })
                 .join('tb_product', { 'tb_order_product.id_product': 'tb_product.id' })
-                .where({ 'tb_product.id_salesman': id_salesman, 'current_status': 'paid', 'tb_order_product.status': method })
+                .where({ 'tb_product.id_salesman': id_salesman })
                 .orderBy('tb_order.created_at', 'DESC')
                 .groupBy('tb_order.id')
                 .paginate({
@@ -78,14 +78,13 @@ class Order {
         }
     }
 
-    static async findAll(page, method) {
+    static async findAll(page) {
 
         try {
-            const order = await knex.select('tb_order.id', 'tb_order.order_total', 'tb_order.id_address', 'tb_order.id_client', 'tb_order.current_status', 'tb_order.created_at')
+            const order = await knex.select('tb_order.id', 'tb_order.order_total', 'tb_order.id_address', 'tb_order.id_client', 'tb_order.created_at')
                 .from('tb_order')
                 .join('tb_order_product', { 'tb_order.id': 'tb_order_product.id_order' })
                 .join('tb_product', { 'tb_order_product.id_product': 'tb_product.id' })
-                .where({ 'current_status': 'paid', 'tb_order_product.status': method })
                 .orderBy('tb_order.created_at', 'DESC')
                 .groupBy('tb_order.id')
                 .paginate({
@@ -98,18 +97,6 @@ class Order {
         } catch (error) {
             Message.warning(error);
             return { success: false, message: 'Houve um erro ao recuperar as compras!' };
-        }
-    }
-
-    static async getStatusOrderProduct() {
-        try {
-            const order = await knex.raw("select status, count(status) from tb_order join tb_order_product on tb_order.id = tb_order_product.id_order" +
-                " where tb_order.current_status = 'paid' group by status");
-
-            return order.rows[0] ? { success: true, status: order.rows } : { success: false, message: 'Não foi possível recuperar a situação dos pedidos / Pedidos inexistentes!' };
-        } catch (error) {
-            Message.warning(error);
-            return { success: false, message: 'Houve um erro ao obter a situação dos pedidos!' };
         }
     }
 
@@ -132,7 +119,7 @@ class Order {
 
 
                     let prod = await knex('tb_product')
-                        .select('tb_product.id', 'tb_product.title', 'tb_product.price', 'tb_product.price_total', 'tb_product.id_salesman')
+                        .select('tb_product.id', 'tb_product.title', 'tb_product.price', 'tb_product.id_salesman')
                         .where({ 'tb_product.id': pBought.id_product, 'tb_product.is_active': true, 'tb_product.is_deleted': false });
 
                     prod = prod[0];
@@ -162,7 +149,7 @@ class Order {
                     if (prod.price !== pBought.price)
                         throw new Error(`Preço de produtos inválido, atualize a página!`);
 
-                    aux = prod.price_total;
+                    aux = prod.price;
                     order_total += roundToTwo(aux * pBought.quantity);
 
                     sales.push({
@@ -174,7 +161,7 @@ class Order {
                         price: pBought.quantity * aux,
                     });
 
-                    products.push({ id_product: prod.id, price: prod.price, price_total: aux, quantity: pBought.quantity, available_quantity: p[0].quantity });
+                    products.push({ id_product: prod.id, price: prod.price, quantity: pBought.quantity, available_quantity: p[0].quantity });
                 }
 
                 let order = await trx('tb_order').insert({ order_total, id_client: client.client.id_client, id_address: address.address.id }).returning('*');
@@ -195,7 +182,7 @@ class Order {
 
                 await trx('tb_order_product').insert(products);
 
-                return { success: true, order, orderPaymentInfo };
+                return { success: true, order };
             });
         } catch (error) {
             Message.warning(error);

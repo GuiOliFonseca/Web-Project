@@ -22,8 +22,6 @@
     </div>
     
       <Pagination v-if="items.length && !loading" v-on:go-to-page="goToPage" :curPage="parseInt(pagination.currentPage)" :numPages="pagination.lastPage"/>
-    
-    <Footer />
   </div>
 </template>
 
@@ -31,14 +29,12 @@
 import OrderItem from "../components/OrderItem.vue";
 import OrderItemLoad from "../components/OrderItemLoad.vue";
 import Pagination from "../components/Pagination.vue";
-import Footer from "../components/Footer.vue";
 import Order from "../services/Order";
 
 export default {
   components: {
     //OrderItem,
     Pagination,
-    Footer,
     OrderItem,
     OrderItemLoad,
   },

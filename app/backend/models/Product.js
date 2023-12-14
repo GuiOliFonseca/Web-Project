@@ -34,21 +34,15 @@ class Product {
     static async findAll(page) {
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.price_total',
                     'tb_product.url_image',
                     'tb_product.key_image',
-                    'tb_product.quality',
-                    'tb_product.style',
-                    'tb_material.name AS material',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
+                    'tb_category.name AS category',
                     'tb_salesman.business_name',
                 )
                 .where({
@@ -73,28 +67,19 @@ class Product {
     static async findOne(id, ignoreDeleted = false) {
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', 'tb_salesman.id', 'tb_product.id_salesman')
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.price_total',
                     'tb_product.description',
                     'tb_product.num_access',
                     'tb_product.quantity',
-                    'tb_product.quality',
-                    'tb_product.width',
-                    'tb_product.style',
-                    'tb_product.depth',
-                    'tb_product.height',
                     'tb_product.is_active',
                     'tb_product.is_deleted',
-                    'tb_material.name AS material',
-                    'tb_material.id as id_material',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
+                    'tb_category.name AS category',
+                    'tb_category.id as id_category',
                     'tb_product.id_salesman',
                     'tb_product.key_image',
                     'tb_product.url_image',
@@ -134,24 +119,17 @@ class Product {
     static async findSalesmanOwnProducts(id_salesman, page = 1) {
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.price_total',
-                    'tb_product.style',
                     'tb_product.url_image',
                     'tb_product.quantity',
-                    'tb_product.quality',
                     'tb_product.key_image',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
                     'tb_product.is_active',
-                    'tb_material.name AS material',
-                    'tb_product_discount.value',
+                    'tb_category.name AS category',
                     'tb_salesman.business_name'
                 )
                 .where({
@@ -171,23 +149,16 @@ class Product {
     static async findAllSalesmanProducts(id_salesman, page) {
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.price_total',
-                    'tb_product.style',
-                    'tb_product.quality',
                     'tb_product.url_image',
                     'tb_product.quantity',
                     'tb_product.key_image',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
-                    'tb_material.name AS material',
-                    'tb_product_discount.value',
+                    'tb_category.name AS category',
                     'tb_salesman.business_name'
                 )
                 .where({
@@ -205,16 +176,6 @@ class Product {
         }
     }
 
-    static async findByDiscount(id_discount) {
-        try {
-            const product = await knex.select('*').where({ id_discount, 'is_deleted': false }).from('tb_product');
-            return product[0] ? { success: true, product: product[0] } : { success: false, message: 'Não foi possível recuperar o produto / Produto inexistente!' };
-        } catch (error) {
-            Message.warning(error);
-            return { success: false, message: 'Houve um erro ao recuperar o produto!' };
-        }
-    }
-
     static async findByTitleAndSalesman(title, id_salesman) {
         try {
             const product = await knex.select('id').where({ title, id_salesman, "is_deleted": false }).from('tb_product');
@@ -225,69 +186,26 @@ class Product {
         }
     }
 
-    static async findMostDiscount(yesterday, today, page) {
+    static async findByCategory(id, page = '1') {
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.price_total',
-                    'tb_product.style',
-                    'tb_product.quality',
                     'tb_product.url_image',
                     'tb_product.quantity',
                     'tb_product.key_image',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
-                    'tb_material.name AS material',
-                    'tb_product_discount.value',
-                    'tb_salesman.business_name'
-                )
-                .where({
-                    'tb_product.is_deleted': false,
-                    'tb_product.is_active': true,
-                })
-                .andWhereBetween('tb_product_discount.created_at', [yesterday, today])
-                .orderBy('tb_product_discount.value', 'DESC')
-                .paginate({ perPage: 20, currentPage: page, isLengthAware: true });
-            return product.data[0] ? { success: true, product } : { success: false, message: 'Não foi possível recuperar os produtos / Produtos inexistentes!' };
-        } catch (error) {
-            Message.warning(error);
-            return { success: false, message: 'Houve um erro ao recuperar os produtos!' };
-        }
-    }
-
-    static async findByMaterial(id, page = '1') {
-        try {
-            const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
-                .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
-                .select(
-                    'tb_product.id',
-                    'tb_product.title',
-                    'tb_product.price',
-                    'tb_product.price_total',
-                    'tb_product.style',
-                    'tb_product.quality',
-                    'tb_product.url_image',
-                    'tb_product.quantity',
-                    'tb_product.key_image',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
-                    'tb_material.name AS material',
-                    'tb_product_discount.value',
+                    'tb_category.name AS category',
                     'tb_salesman.business_name',
                     'tb_salesman.id AS id_salesman'
                 )
                 .where({
                     'tb_product.is_deleted': false,
                     'tb_product.is_active': true,
-                    'tb_product.id_material': id
+                    'tb_product.id_category': id
                 })
                 .paginate({ perPage: 20, currentPage: page, isLengthAware: true });
             return product.data[0] ? { success: true, product } : { success: false, message: 'Não foi possível recuperar os produtos / Produtos inexistentes!' };
@@ -301,23 +219,18 @@ class Product {
 
         try {
             const product = await knex('tb_product')
-                .join('tb_material', { 'tb_material.id': 'tb_product.id_material' })
-                .leftJoin('tb_product_discount', { 'tb_product_discount.id': 'tb_product.id_discount' })
+                .join('tb_category', { 'tb_category.id': 'tb_product.id_category' })
                 .join('tb_salesman', { 'tb_salesman.id': 'tb_product.id_salesman' })
                 .join('tb_address', 'tb_address.id_user', 'tb_salesman.id_user')
                 .select(
                     'tb_product.id',
                     'tb_product.title',
                     'tb_product.price',
-                    'tb_product.style',
                     'tb_product.url_image',
                     'tb_product.key_image',
                     'tb_product.quantity',
-                    'tb_material.name as material',
-                    'tb_product.quality',
+                    'tb_category.name as category',
                     'tb_product.id_salesman',
-                    'tb_product_discount.value AS discount',
-                    'tb_product_discount.id AS id_discount',
                     'tb_salesman.business_name',
                     'tb_product.created_at',
                     'tb_address.city',
@@ -325,13 +238,13 @@ class Product {
                 )
                 .where(function () {
                     this.whereRaw("unaccent(:productTitle:) ilike unaccent(:search) or " +
-                        "unaccent(:materialName:) ilike unaccent(:search) or " +
+                        "unaccent(:categoryName:) ilike unaccent(:search) or " +
                         "unaccent(:productDesc:) ilike unaccent(:search) or " +
                         "unaccent(:salesmanBusiness:) ilike unaccent(:search)",
                         {
                             productTitle: 'tb_product.title',
                             productDesc: 'tb_product.description',
-                            materialName: 'tb_material.name',
+                            categoryName: 'tb_category.name',
                             salesmanBusiness: 'tb_salesman.business_name',
                             search: '%' + filter.search + '%'
                         })
@@ -340,31 +253,6 @@ class Product {
                     if (filter.minPrice) this.andWhere('tb_product.price', '>=', filter.minPrice);
 
                     if (filter.maxPrice) this.andWhere('tb_product.price', '<=', filter.maxPrice);
-
-                    if (filter.minQuality) {
-
-                        switch (filter.minQuality) {
-                            case 'A': filter.minQuality = '1'; break;
-                            case 'B': filter.minQuality = '2'; break;
-                            case 'C': filter.minQuality = '3'; break;
-                            case 'E': filter.minQuality = '4'; break;
-                            default: filter.minQuality = '1';
-                        }
-
-                        this.andWhere('tb_product.quality', '>=', filter.minQuality);
-                    }
-
-                    if (filter.maxQuality) {
-                        switch (filter.maxQuality) {
-                            case 'A': filter.maxQuality = '1'; break;
-                            case 'B': filter.maxQuality = '2'; break;
-                            case 'C': filter.maxQuality = '3'; break;
-                            case 'E': filter.maxQuality = '4'; break;
-                            default: filter.maxQuality = '4';
-                        }
-
-                        this.andWhere('tb_product.quality', '<=', filter.maxQuality);
-                    }
                 })
                 .andWhere({
                     'tb_product.is_deleted': false,
@@ -394,6 +282,8 @@ class Product {
     }
 
     static async create(product, product_images) {
+        console.log(product);
+        console.log(product_images);
         try {
             return await knex.transaction(async trx => {
                 let result = {}
@@ -481,17 +371,6 @@ class Product {
             return { success: true };
         } catch (error) {
             Message.warning(error);
-            return { success: false };
-        }
-    }
-
-    static async rollback(id, quantity) {
-        console.log(id, quantity);
-        try {
-            await knex('tb_product').update({ 'quantity': knex.raw('quantity + ' + quantity), is_active: true }).where({ id });
-            return { success: true };
-        } catch (error) {
-            Message.warning(error, 'roolback');
             return { success: false };
         }
     }

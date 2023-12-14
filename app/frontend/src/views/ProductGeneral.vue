@@ -20,7 +20,6 @@
         v-if="!loading && $store.state.user.user.type != 'V'"
       />
     </div>
-    <Footer />
   </div>
 </template>
 
@@ -29,10 +28,8 @@ import ProductDetails from "../components/ProductDetails.vue";
 import Avaliation from "../components/ProductAvaliation.vue";
 import ProductDetailsLoading from "../components/ProductDetailsLoading.vue";
 import ProductAvaliation from "../services/ProductAvaliation";
-import Footer from "../components/Footer.vue";
 import Product from "../services/Product";
 import Salesman from "../services/Salesman";
-import Chat from "../components/Chat.vue";
 import Pagination from "../components/Pagination.vue";
 
 export default {
@@ -41,8 +38,6 @@ export default {
     Avaliation,
     ProductAvaliation,
     ProductDetails,
-    Footer,
-    Chat,
     Pagination
   },
   data() {

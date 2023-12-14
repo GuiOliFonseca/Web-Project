@@ -140,24 +140,9 @@ class SalesmanController {
             (salesman.success && Object.keys(salesman.salesman).length && salesman.salesman.is_deleted))
             return res.status(404).send({ success: false, message: 'Usuário inexistente!' });
 
-
-        const numSalesToBeReceived = OrderProduct.countSaleStatusBySalesman(id, 'R', false);
-        if (numSalesToBeReceived.success) {
-            if (numSalesToBeReceived.numSales > 0)
-                return res.status(409).send({ success: false, message: 'A conta não pode ser deletada, pois ainda existem pedidos a serem recebidos pelos clientes!' });
-        } else {
-            return res.status(400).send(numSalesToBeReceived);
-        }
-
         const result = await Salesman.delete(salesman.salesman.id_user, salesman.salesman.id_salesman);
         return result ? res.send(result) : res.status(400).send(result);
     };
-
-    static async indexMessage(req, res) {
-        const messages = await Salesman.findAllSalesmanMessage(req.locals.id_salesman);
-        console.log(messages)
-        return messages.success ? res.send(messages) : res.status(400).send(messages);
-    }
 };
 
 module.exports = SalesmanController;

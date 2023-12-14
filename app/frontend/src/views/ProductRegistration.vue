@@ -50,75 +50,12 @@
           </svg>
           <span class="text-sm">(Esc)</span>
         </div>
-
-        <!-- Add margin if you want to see some of the overlay behind the modal-->
-        <div class="modal-content py-4 text-left px-6">
-          <!--Title-->
-          <div class="flex justify-between items-center pb-3">
-            <p class="text-2xl font-bold">Material não encontrado</p>
-            <div class="modal-close cursor-pointer z-50" @click="open = false">
-              <svg
-                class="fill-current text-black"
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-              >
-                <path
-                  d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <!--Body-->
-          <p>
-            Esse material ainda não está cadastrado, deseja cadastrar agora?
-          </p>
-
-          <!--Footer-->
-          <div class="flex justify-end pt-2">
-            <button
-              @click="open = false"
-              class="
-                px-6
-                py-3
-                bg-transparent
-                p-3
-                rounded-lg
-                text-red-800
-                hover:bg-gray-100
-                hover:text-red-800
-                mr-2
-              "
-            >
-              Fechar
-            </button>
-            <button
-              :disabled="buttonLoading"
-              @click="registerMaterialAndProduct()"
-              class="
-                px-6
-                py-3
-                bg-red-800
-                hover:bg-red-800
-                text-white
-                font-bold
-                border-b-4 border-red-800
-                focus:outline-none
-                rounded
-              "
-            >
-              Cadastrar
-            </button>
-          </div>
-        </div>
       </div>
     </div>
 
     <div
       :class="`modal ${
-        !openModalBankAddress && 'opacity-0 pointer-events-none'
+        !openModalAddress && 'opacity-0 pointer-events-none'
       } z-50 fixed w-full h-full top-0 left-0 flex items-center justify-center`"
     >
       <div
@@ -139,21 +76,17 @@
         "
       >
 
-        <!-- Add margin if you want to see some of the overlay behind the modal-->
         <div class="modal-content py-4 text-left px-6">
-          <!--Title-->
           <div class="flex justify-between items-center pb-3">
-            <p class="text-2xl font-bold">Endereço e/ou conta bancária não cadastrados</p>
+            <p class="text-2xl font-bold">Endereço não cadastrado</p>
             <div class="modal-close cursor-pointer z-50">
             </div>
           </div>
 
-          <!--Body-->
           <p>
-            Você precisa cadastrar seu endereço e conta bancária para conseguir cadastrar um produto!
+            Você precisa cadastrar seu endereço para conseguir cadastrar um produto!
           </p>
 
-          <!--Footer-->
           <div class="flex justify-end pt-2">
             <button
               @click="$router.push('/perfil')"
@@ -291,7 +224,7 @@
               <div class="sm:flex mb-4 sm:space-x-4">
                 <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
                   <label
-                    for="material"
+                    for="category"
                     class="
                       mb-1
                       text-xs
@@ -301,62 +234,23 @@
                       text-gray-600
                     "
                   >
-                    Material
+                    Categoria
                   </label>
                   <input
-                    @input="updateNameMaterial"
+                    @input="updateNameCategory"
                     class="p-5 w-full border rounded h-10 capitalize"
-                    list="list-material"
-                    ref="material"
+                    list="list-category"
+                    ref="category"
                     required
                   />
-                  <datalist v-if="!loading" id="list-material">
+                  <datalist v-if="!loading" id="list-category">
                     <option
                       class="capitalize"
-                      v-for="material in materialList"
-                      :key="material.id"
-                      :value="material.name"
+                      v-for="category in categoryList"
+                      :key="category.id"
+                      :value="category.name"
                     />
                   </datalist>
-                </div>
-                <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
-                  <label
-                    for="style"
-                    class="
-                      mb-1
-                      text-xs
-                      font-bold
-                      sm:text-sm
-                      tracking-wide
-                      text-gray-600
-                    "
-                  >
-                    Estilo de trabalho
-                  </label>
-                  <select
-                    id="style"
-                    v-model="style"
-                    name="style"
-                    required
-                    class="
-                      text-sm
-                      sm:text-sm
-                      w-full
-                      border
-                      rounded
-                      text-gray-800
-                      placeholder-gray-500
-                      focus:border-red-800
-                      focus:outline-none
-                      py-2
-                      px-4
-                    "
-                  >
-                    <option value="polido">Polido</option>
-                    <option value="escovado">Escovado</option>
-                    <option value="laminado">Laminado</option>
-                    <option value="polido e resinado">Polido e resinado</option>
-                  </select>
                 </div>
               </div>
               <div class="sm:flex mb-4 sm:space-x-4">
@@ -372,7 +266,7 @@
                       text-gray-600
                     "
                   >
-                    Preço por m²
+                    Preço
                   </label>
                   <div class="relative">
                     <div
@@ -407,7 +301,7 @@
                       v-model="price"
                       name="price"
                       type="text"
-                      @keyup="calculatePricePerPlate()"
+                      @keyup="moneyFormat()"
                       placeholder="Valor por m²"
                       required
                       autocomplete="off"
@@ -467,255 +361,6 @@
                     "
                   />
                 </div>
-                <div class="w-full sm:w-2/6">
-                  <label
-                    for="quality"
-                    class="
-                      mb-1
-                      text-xs
-                      font-bold
-                      sm:text-sm
-                      tracking-wide
-                      text-gray-600
-                    "
-                  >
-                    Qualidade
-                  </label>
-                  <select
-                    id="quality"
-                    v-model="quality"
-                    name="quality"
-                    required
-                    class="
-                      text-sm
-                      sm:text-sm
-                      w-full
-                      border
-                      rounded
-                      text-gray-800
-                      placeholder-gray-500
-                      focus:border-red-800
-                      focus:outline-none
-                      py-2
-                      px-4
-                    "
-                  >
-                    <option value="1">Tipo A</option>
-                    <option value="2">Tipo B</option>
-                    <option value="3">Tipo C</option>
-                    <option value="4">Tipo E</option>
-                  </select>
-                </div>
-              </div>
-              <div class="sm:flex mb-6 sm:space-x-4">
-                <div class="w-full sm:w-1/3 mb-4 sm:mb-0">
-                  <label
-                    for="height"
-                    class="
-                      mb-1
-                      text-xs
-                      font-bold
-                      sm:text-sm
-                      tracking-wide
-                      text-gray-600
-                    "
-                  >
-                    Altura
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="
-                        absolute
-                        flex
-                        border border-transparent
-                        right-0
-                        top-0
-                        h-full
-                        w-10
-                      "
-                    >
-                      <div
-                        class="
-                          flex
-                          items-center
-                          justify-center
-                          rounded-tr rounded-br
-                          z-10
-                          bg-gray-100
-                          text-gray-600 text-md
-                          h-full
-                          w-full
-                        "
-                      >
-                        m
-                      </div>
-                    </div>
-                    <input
-                      id="height"
-                      v-model="height"
-                      name="height"
-                      type="number"
-                      step="0.01"
-                      autocomplete="off"
-                      @keyup="calculatePricePerPlate()"
-                      placeholder="Medida"
-                      required
-                      class="
-                        text-sm
-                        sm:text-sm
-                        relative
-                        w-full
-                        border
-                        rounded
-                        text-gray-800
-                        placeholder-gray-500
-                        focus:border-red-800
-                        focus:outline-none
-                        py-2
-                        pl-2
-                        pr-12
-                      "
-                    />
-                  </div>
-                </div>
-                <div class="w-full sm:w-1/3 mb-4 sm:mb-0">
-                  <label
-                    for="width"
-                    class="
-                      mb-1
-                      text-xs
-                      font-bold
-                      sm:text-sm
-                      tracking-wide
-                      text-gray-600
-                    "
-                  >
-                    Comprimento
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="
-                        absolute
-                        flex
-                        border border-transparent
-                        right-0
-                        top-0
-                        h-full
-                        w-10
-                      "
-                    >
-                      <div
-                        class="
-                          flex
-                          items-center
-                          justify-center
-                          rounded-tr rounded-br
-                          z-10
-                          bg-gray-100
-                          text-gray-600 text-md
-                          h-full
-                          w-full
-                        "
-                      >
-                        m
-                      </div>
-                    </div>
-                    <input
-                      id="width"
-                      v-model="width"
-                      name="width"
-                      type="number"
-                      step="0.01"
-                      placeholder="Medida"
-                      required
-                      autocomplete="off"
-                      @keyup="calculatePricePerPlate()"
-                      class="
-                        text-sm
-                        sm:text-sm
-                        relative
-                        w-full
-                        border
-                        rounded
-                        text-gray-800
-                        placeholder-gray-500
-                        focus:border-red-800
-                        focus:outline-none
-                        py-2
-                        pl-2
-                        pr-12
-                      "
-                    />
-                  </div>
-                </div>
-                <div class="w-full sm:w-1/3">
-                  <label
-                    for="depth"
-                    class="
-                      mb-1
-                      text-xs
-                      font-bold
-                      sm:text-sm
-                      tracking-wide
-                      text-gray-600
-                    "
-                  >
-                    Espessura
-                  </label>
-                  <div class="relative">
-                    <div
-                      class="
-                        absolute
-                        flex
-                        border border-transparent
-                        right-0
-                        top-0
-                        h-full
-                        w-10
-                      "
-                    >
-                      <div
-                        class="
-                          flex
-                          items-center
-                          justify-center
-                          rounded-tr rounded-br
-                          z-10
-                          bg-gray-100
-                          text-gray-600 text-md
-                          h-full
-                          w-full
-                        "
-                      >
-                        cm
-                      </div>
-                    </div>
-                    <input
-                      id="depth"
-                      v-model="depth"
-                      name="depth"
-                      type="number"
-                      step="0.01"
-                      placeholder="Medida"
-                      required
-                      class="
-                        text-sm
-                        sm:text-sm
-                        relative
-                        w-full
-                        border
-                        rounded
-                        text-gray-800
-                        placeholder-gray-500
-                        focus:border-red-800
-                        focus:outline-none
-                        py-2
-                        pl-2
-                        pr-12
-                      "
-                    />
-                  </div>
-                </div>
               </div>
             </div>
             <div class="w-full md:w-1/2 mt-4 md:mt-0">
@@ -755,75 +400,6 @@
                   "
                 ></textarea>
               </div>
-            </div>
-          </div>
-          <div class="w-full mb-4 sm:mb-0 align-center">
-            <label
-              for="price"
-              class="
-                mb-1
-                text-xs
-                font-bold
-                sm:text-sm
-                tracking-wide
-                text-gray-600
-              "
-            >
-              Preço total por chapa
-            </label>
-            <div class="relative">
-              <div
-                class="
-                  absolute
-                  flex
-                  border border-transparent
-                  left-0
-                  top-0
-                  h-full
-                  w-10
-                "
-              >
-                <div
-                  class="
-                    flex
-                    items-center
-                    justify-center
-                    rounded-tl rounded-bl
-                    z-10
-                    bg-gray-100
-                    text-gray-600 text-md
-                    h-full
-                    w-full
-                  "
-                >
-                  R$
-                </div>
-              </div>
-              <input
-                id="price"
-                v-model="pricePerPlate"
-                name="price"
-                type="text"
-                step="0.01"
-                placeholder="Valor por chapa"
-                required
-                disabled="true"
-                class="
-                  text-sm
-                  sm:text-sm
-                  relative
-                  w-full
-                  border
-                  rounded
-                  text-gray-800
-                  placeholder-gray-500
-                  focus:border-red-800
-                  focus:outline-none
-                  py-2
-                  pr-2
-                  pl-12
-                "
-              />
             </div>
           </div>
           <div>
@@ -875,15 +451,13 @@
         </form>
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script>
 import MessageCardFixed from "../components/MessageCardFixed.vue";
-import Footer from "../components/Footer.vue";
 import Product from "../services/Product";
-import Material from "../services/Material";
+import Category from "../services/Category";
 import Salesman from "../services/Salesman";
 
 export default {
@@ -905,23 +479,20 @@ export default {
       depth: undefined,
       description: undefined,
 
-      materialList: [],
-      material: undefined,
+      categoryList: [],
+      category: undefined,
       style: undefined,
       loading: true,
       files: [],
 
-      open: false,
-      createMaterial: undefined,
-
       buttonLoading: false,
 
-      openModalBankAddress: undefined
+      openModalAddress: undefined
     };
   },
   methods: {
-    updateNameMaterial(){
-      this.material = this.$refs.material.value;
+    updateNameCategory(){
+      this.category = this.$refs.category.value;
     },
     moneyFormat() {
       let v = this.price.replace(/\D/g, '');
@@ -930,26 +501,6 @@ export default {
       v = v.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
       v = v.replace(/(\d)(\d{3}),/g, '$1.$2,');
       this.price = v;
-    },
-    calculatePricePerPlate(){
-      let priceWithoutDot;
-      this.moneyFormat();
-      if(this.price) {
-        priceWithoutDot = this.price.replace('.', '');
-      }
-      if(!this.price || !this.width || !this.height) return 
-      else{
-        this.pricePerPlate = (parseFloat(priceWithoutDot.replace(',', '.')) * (this.width * this.height)).toFixed(2);
-        this.formatPricePerPlate();
-      }
-    },
-    formatPricePerPlate(){
-      let v = this.pricePerPlate.replace(/\D/g, '');
-      v = `${(v / 100).toFixed(2)}`;
-      v = v.replace('.', ',');
-      v = v.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
-      v = v.replace(/(\d)(\d{3}),/g, '$1.$2,');
-      this.pricePerPlate = v;
     },
     async removeImage(key) {
       this.images = this.images.filter((image) => image.key != key);
@@ -983,7 +534,6 @@ export default {
             this.files.push(files[i]);
             this.qtdImages++;
           }
-          //console.log(this.files);
         }
       }
     },
@@ -993,40 +543,35 @@ export default {
         this.setMessage("Erro!", "error", "Adicione pelo menos uma foto do produto!", 3000);
         return;
       }
-      this.buttonLoading = true;
-      const exists = this.materialList.filter((material) => {
+      const exists = this.categoryList.filter((category) => {
         if (
-          material.name
+          category.name
             .toLowerCase()
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "") ==
-          this.material
+          this.category
             .toLowerCase()
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
         )
-          return material;
+          return category;
       });
 
       let data = {
         title: this.titleProduct,
         price: parseFloat(this.price.replace('.', '').replace(',', '.')).toFixed(2),
         quantity: parseInt(this.quantity),
-        quality: this.quality,
-        width: parseFloat(this.width).toFixed(2),
-        height: parseFloat(this.height).toFixed(2),
-        depth: parseFloat(this.depth).toFixed(2),
         description: this.description,
         id_salesman: this.$store.state.user.user.id_salesman,
-        style: this.style,
       };
 
       if (exists && exists.length) {
-        data.id_material = exists[0].id;
+        data.id_category = exists[0].id;
       } else {
-        this.open = true;
+        this.setMessage("Erro!", "error", "Selecione uma categoria já existente!", 3000);
         return;
       }
+      this.buttonLoading = true;
 
       let formData = new FormData();
       for (let image of this.files) {
@@ -1043,60 +588,21 @@ export default {
       }
       this.buttonLoading = false;
     },
-    async registerMaterialAndProduct() {
-      this.buttonLoading = true;
-      let data = {
-        title: this.titleProduct,
-        price: parseFloat(this.price.replace('.', '').replace(',', '.')).toFixed(2),
-        quantity: parseInt(this.quantity),
-        quality: this.quality,
-        width: parseFloat(this.width).toFixed(2),
-        height: parseFloat(this.height).toFixed(2),
-        depth: parseFloat(this.depth).toFixed(2),
-        description: this.description,
-        id_salesman: this.$store.state.user.user.id_salesman,
-        style: this.style,
-      };
-
-      const material = await Material.create({
-        name: this.material,
-        id_salesman: this.$store.state.user.user.id_salesman,
-      });
-      if (material.success) {
-        data.id_material = material.material.id;
-
-        let formData = new FormData();
-        for (let image of this.files) {
-          formData.append("file", image);
-        }
-        formData.append("data", JSON.stringify(data));
-        const result = await Product.create(formData);
-        if (result.success) {
-          this.setMessage("Sucesso!", "success", "Produto cadastrado!", 3000);
-          this.$router.push({ path: "/produto/" + result.product.id });
-        } else this.setMessage("Erro!", "error", result.message, 3000);
-      } else {
-        this.setMessage("Erro!", "error", material.message, 3000);
-      }
-      this.open = false;
-      this.buttonLoading = false;
-    },
   },
   components: {
     MessageCardFixed,
-    Footer,
   },
   async created() {
     if (!this.$store.state.user.user.id_salesman) this.$router.push("/");
-    const materials = await Material.getAll(1);
-    this.materialList = materials.material;
+    const categories = await Category.getAll(1);
+    this.categoryList = categories.category;
     this.loading = false;
 
     const salesman = await Salesman.getSalesmanById(this.$store.state.user.user.id_salesman);
     if(!salesman.success) this.$router.push("/");
-    if(salesman.salesman.id_address && salesman.salesman.id_bank_account){
-      this.openModalBankAddress = false;
-    }else this.openModalBankAddress = true;
+    if(salesman.salesman.id_address){
+      this.openModalAddress = false;
+    }else this.openModalAddress = true;
   }
 };
 </script>

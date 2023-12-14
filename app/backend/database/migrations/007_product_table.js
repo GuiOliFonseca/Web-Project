@@ -9,7 +9,6 @@ exports.up = async function (knex) {
         table.text('description').notNullable();
         table.decimal('price').notNullable();
         table.integer('quantity').notNullable();
-        table.decimal('price_total').notNullable();
         table.boolean('is_active').defaultTo(true).notNullable();
         table.boolean('is_deleted').defaultTo(false).notNullable();
         table.string('url_image', 200).notNullable();

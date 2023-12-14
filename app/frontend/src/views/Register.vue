@@ -409,28 +409,6 @@
               >As senhas não coincidem!</small
             >
           </div>
-          <p class="text-gray-700 text-center mt-2">
-            Ao cadastrar, você concorda com os
-            <span
-              @click="
-                openLink(
-                  'https://system-photos.s3.sa-east-1.amazonaws.com/Termos-de-Uso-ISTONES.pdf'
-                )
-              "
-              class="text-red-800 cursor-pointer"
-              >Termos de Uso</span
-            >
-            e
-            <span
-              @click="
-                openLink(
-                  'https://system-photos.s3.sa-east-1.amazonaws.com/POL%C3%8DTICAS-DE-PRIVACIDADE-Istones.pdf'
-                )
-              "
-              class="cursor-pointer text-red-800"
-              >Política de Privacidade</span
-            >.
-          </p>
           <MessageCard
             class="justify-center"
             :type="type"
@@ -526,9 +504,6 @@
           >
         </div>
       </div>
-      <p class="text-center text-gray-500 text-xs mt-10">
-        &copy;2020 iStones | All rights reserved.
-      </p>
     </div>
   </div>
 </template>

@@ -106,9 +106,9 @@
               <hr class="border-gray-700 my-2" />
               <div class="my-2">
                 <p class="text-sm">
-                  Material:
+                  Categoria:
                   <span class="mr-1 text-white font-bold capitalize">
-                    {{ product.material }}</span>
+                    {{ product.category }}</span>
                 </p>
                 <p class="text-sm">
                   Altura:

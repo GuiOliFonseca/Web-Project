@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import Material from "../services/Material";
+import Category from "../services/Category";
 import MessageCardFixed from "../components/MessageCardFixed.vue";
 
 export default {
@@ -90,7 +90,7 @@ export default {
     };
   },
   async created() {
-    const material = await Material.getAll();
+    const material = await Category.getAll();
     //console.log(material);
     if (material.success) {
       this.materials = material.material;
@@ -125,7 +125,7 @@ export default {
     },
     async remove(id) {
         //console.log(id)
-      const result = await Material.destroy(id);
+      const result = await Category.destroy(id);
       if (result.success) {
         this.materials = this.materials.filter((mat) => id != mat.id);
         this.searchWord = "";

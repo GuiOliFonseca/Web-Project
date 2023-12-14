@@ -64,17 +64,6 @@ class Salesman {
         }
     }
 
-    static async getNotifications(id_salesman){
-        try {
-            const response = await axios.get(`${apiURL}/salesman/all/message/${id_salesman}`);
-            return response.data;
-        } catch (error) {
-            if(error.response && error.response.data)
-                return error.response.data
-            else return {success: false, message: 'Houve um erro desconhecido'}; 
-        }
-    }
-
     static async reactive(id_salesman){
         try {
             const response = await axios.get(`${apiURL}/salesman/retrieve/${id_salesman}`);

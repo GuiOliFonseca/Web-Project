@@ -12,7 +12,6 @@ exports.up = async function (knex) {
         table.date('birthdate').notNullable();
         table.string('type', 1).notNullable();
         table.boolean('is_deleted').defaultTo(false).notNullable();
-        table.boolean('is_verified').defaultTo(true);
         table.timestamps(false, true); //created_at/updated_at
     });
 

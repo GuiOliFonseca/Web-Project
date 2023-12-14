@@ -8,16 +8,10 @@
           alt="iStones"
         />
       </div>
-      <form class="mt-4" @submit.prevent="resend">
+      <form class="mt-4" @submit.prevent="send">
         <div class="mb-1 mt-10">
           <p class="block text-sm fontme text-gray-500 text-center">
-            Você deve confirmar o email antes de acessar!
-          </p>
-        </div>
-
-        <div class="mb-1">
-          <p class="block text-sm fontme text-gray-500 text-center">
-            Ainda não recebeu nosso email?
+            Conta criada com sucesso!
           </p>
         </div>
 
@@ -40,34 +34,16 @@
             "
             :disabled="blockAction"
           >
-            Reenviar
+            Login
           </button>
-          <MessageCard :type="type" :message="message" :title="title" />
-          <router-link
-            class="
-              block
-              text-sm
-              fontme
-              text-gray-500
-              hover:text-red-700 hover:underline
-              text-center
-              mt-2
-            "
-            to="/login"
-            >Login</router-link
-          >
         </div>
       </form>
-      <p class="text-center text-gray-500 text-xs mt-10">
-        &copy;2020 iStones | All rights reserved.
-      </p>
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
-import MessageCard from "../components/MessageCard.vue";
 import Login from "../services/Login";
 
 export default defineComponent({
@@ -85,23 +61,8 @@ export default defineComponent({
     };
   },
   methods: {
-    async resend() {
-      this.blockAction = true;
-      const result = await Login.resendConfirmationEmail(this.id);
-      if (result.success) {
-        this.message = result.message;
-        this.title = "Sucesso!";
-        this.type = "success";
-      } else {
-        this.message = result.message;
-        this.title = "Erro";
-        this.type = "error";
-      }
-
-      this.blockAction = false;
-      setTimeout(() => {
-        this.type = "none";
-      }, 3000);
+    async send() {
+      this.$router.push({ path: "/login" });
     },
   },
   created: function () {
@@ -111,9 +72,6 @@ export default defineComponent({
       delete query.id;
       this.$router.replace({ query });
     } else this.$router.push({ path: "/login" });
-  },
-  components: {
-    MessageCard,
   },
 });
 </script>

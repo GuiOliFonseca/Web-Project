@@ -5,7 +5,6 @@ exports.up = async function (knex) {
     await knex.schema.createTable(tableName, function (table) {
         table.increments('id').primary().notNullable();
         table.decimal('order_total').notNullable();
-        table.string('current_status', 50).notNullable().defaultTo('paid');
         table.integer('id_client').notNullable().unsigned().references('id').inTable('tb_client').onDelete('CASCADE');
         table.integer('id_address').notNullable().unsigned().references('id').inTable('tb_address').onDelete('CASCADE');
         table.timestamps(false, true); //created_at/updated_at

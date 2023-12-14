@@ -55,7 +55,7 @@
         <div class="modal-content py-4 text-left px-6">
           <!--Title-->
           <div class="flex justify-between items-center pb-3">
-            <p class="text-2xl font-bold">Material não encontrado</p>
+            <p class="text-2xl font-bold">Categoria não encontrada</p>
             <div class="modal-close cursor-pointer z-50" @click="open = false">
               <svg
                 class="fill-current text-black"
@@ -847,16 +847,13 @@
         </form>
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script>
 import MessageCardFixed from "../components/MessageCardFixed.vue";
-import Footer from "../components/Footer.vue";
 import Product from "../services/Product";
-import Material from "../services/Material";
-import Discount from "../services/Discount";
+import Category from "../services/Category";
 
 export default {
   data() {
@@ -870,13 +867,6 @@ export default {
       images: [],
       price: undefined,
       pricePerPlate: undefined,
-      discount: undefined,
-      pastDiscount: undefined,
-      quantity: undefined,
-      quality: "A",
-      width: undefined,
-      height: undefined,
-      depth: undefined,
       description: undefined,
 
       materialList: [],
@@ -889,7 +879,6 @@ export default {
       files: [],
 
       open: false,
-      createMaterial: undefined,
 
       buttonLoading: false,
     };
@@ -1058,7 +1047,7 @@ export default {
         id_product: this.id_product,
       };
 
-      const material = await Material.create({
+      const material = await Category.create({
         name: this.material,
         id_salesman: this.$store.state.user.user.id_salesman,
       });
@@ -1094,7 +1083,6 @@ export default {
   },
   components: {
     MessageCardFixed,
-    Footer,
   },
   async created() {
     if (!this.$store.state.user.user.id_salesman) this.$router.push("/");
@@ -1132,7 +1120,7 @@ export default {
       this.moneyFormat();
     } else return this.$router.push({ patch: "/" });
 
-    const materials = await Material.getAll(1);
+    const materials = await Category.getAll(1);
     this.materialList = materials.material;
     this.loading = false;
   },
